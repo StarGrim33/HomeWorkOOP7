@@ -187,4 +187,21 @@
             Name ??= "Аноним";
         }
     }
+
+    class SittingVan
+    {
+        public string Name { get; private set; }
+    }
+
+    class CommonVan
+    {
+        public string Name { get; private set; }
+
+    }
+
+    class ReservedVan
+    {
+        public string Name { get; private set; }
+
+    }
 }
