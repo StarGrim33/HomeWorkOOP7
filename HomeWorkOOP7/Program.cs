@@ -11,8 +11,8 @@
             User user = new("Аноним");
             Depot depot = new();
             Van van = new();
-            SittingVan sittingVan;
-            ReservedVan reservedVan;
+            SittingVan sittingVan = new();
+            ReservedVan reservedVan = new();
             Train train = new();
             while (isProgrammOn)
             {
@@ -29,7 +29,7 @@
                 switch (userInput)
                 {
                     case CommandFormTrain:
-                        depot.CreateTrain(train);
+                        depot.CreateTrain(train, van, sittingVan, reservedVan);
                         break;
 
                     case CommandExit:
@@ -65,10 +65,21 @@
             }
         }
 
-        public void CreateTrain(Train train)
+        public void CreateTrain(Train train, Van van, SittingVan sittingVan, ReservedVan reservedVan)
         {
             train.SetDirection(out _);
             train.SellTickets(out _);
+
+            if(train.OccupiedPlace >1)
+            {
+                Console.WriteLine($"На поезд зарегистрировано {train.OccupiedPlace} пассажиров");
+                Console.WriteLine("Нужно сформировать вагоны, какие вы выберете?:");
+                Console.WriteLine($"{van.Name} мест: {van.Places}, {sittingVan.Name} мест: {sittingVan.Places}, {reservedVan.Name} мест: {reservedVan.Places}");
+                string userInput = Console.ReadLine();
+            }
+
+
+
             _trains.Add(train);
         }
     }
@@ -143,10 +154,11 @@
         public int Places { get; private set; } = 36;
         public string Name { get; set; }
 
-        public Van(string name = "Обычный вагон")
+        public Van()
         {
-            Name = name;
+            Name = "Обычный вагон";
         }
+
         public void ShowVan()
         {
             Console.WriteLine($"{Name}, количество мест: {Places}");
@@ -156,12 +168,20 @@
     class SittingVan : Van
     {
         public new int Places { get; private set; } = 68;
-        SittingVan(string name = "Сидячий вагон") : base(name) { }
+
+        public SittingVan()
+        {
+            Name = "Сидячий вагон";
+        }
     }
 
     class ReservedVan : Van
     {
         public new int Places { get; private set; } = 54;
-        ReservedVan(string name = "Плацкарт") : base(name) { }
+
+        public ReservedVan()
+        {
+            Name = "Плацкарт";
+        }
     }
 }
