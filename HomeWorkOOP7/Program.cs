@@ -8,12 +8,11 @@
             const string CommandExit = "2";
 
             bool isProgrammOn = true;
-            User user = new("Аноним");
+            User user = new();
             Depot depot = new();
-            Van van = new();
-            SittingVan sittingVan = new();
-            ReservedVan reservedVan = new();
             Train train = new();
+            //Van van = new();
+
             while (isProgrammOn)
             {
                 Console.Clear();
@@ -29,7 +28,7 @@
                 switch (userInput)
                 {
                     case CommandFormTrain:
-                        depot.CreateTrain(train, van, sittingVan, reservedVan);
+                        depot.AddTrain();
                         break;
 
                     case CommandExit:
@@ -47,8 +46,6 @@
     class Depot
     {
         private List<Train> _trains = new();
-        
-        private bool _isSend = false;
 
         public void ShowDepot()
         {
@@ -60,81 +57,126 @@
             {
                 foreach (Train train in _trains)
                 {
-                    Console.WriteLine($"Направление: {train.Direction}, всего мест в поезде: {train.FreePlace}, свободно мест: {train.FreePlace}, занято мест: {train.OccupiedPlace}, вагонов: {train.Vans}, отправлен: {train.IsSend}");
+                    Console.WriteLine($"Направление: {train.Direction}, всего мест в поезде: {train.MaxPlaces}, свободно мест: {train.FreePlace}, занято мест: {train.OccupiedPlace}");
                 }
             }
         }
 
-        public void CreateTrain(Train train, Van van, SittingVan sittingVan, ReservedVan reservedVan)
+        public void AddTrain()
         {
-            train.SetDirection(out _);
-            train.SellTickets(out _);
+            string direction = SetDirection();
+            int soldTickets = SellTickets();
+            List<Van> vans = AddVagons(soldTickets);
+            Train train = new Train(direction, soldTickets, vans);
+            _trains.Add(train);
+            Console.Clear();
+            ShowDepot();
+            train.ShowVans();
+        }
 
-            if(train.OccupiedPlace >1)
+        private string SetDirection()
+        {
+            Console.WriteLine("Введите город отправления: ");
+            string arrive = Console.ReadLine();
+
+            Console.WriteLine("Введите город прибытия: ");
+            string departure = Console.ReadLine();
+
+            string direction = arrive + "-" + departure;
+            return direction;
+        }
+
+        private int SellTickets()
+        {
+            Random _random = new();
+            int minNumber = 300;
+            int maxNumber = 540;
+            int randomNumber = _random.Next(minNumber, maxNumber);
+            return randomNumber;
+        }
+
+        private List<Van> AddVagons(int soldTickets)
+        {
+            const string CommandSleppingVagon = "1";
+            const string CommandSittingVagon = "2";
+            const string CommandReservedVagon = "3";
+
+            List<Van> vans = new List<Van>();
+            Van sleeping = new Van("Спальный вагон", 18);
+            Van sitting = new Van("Купе", 36);
+            Van reserved = new Van("Плацкарт", 52);
+
+            while(soldTickets > 0)
             {
-                Console.WriteLine($"На поезд зарегистрировано {train.OccupiedPlace} пассажиров");
-                Console.WriteLine("Нужно сформировать вагоны, какие вы выберете?:");
-                Console.WriteLine($"{van.Name} мест: {van.Places}, {sittingVan.Name} мест: {sittingVan.Places}, {reservedVan.Name} мест: {reservedVan.Places}");
+                Console.Clear();
+                Console.WriteLine($"Количество пассажиров: {soldTickets}");
+                Console.WriteLine("Выберите вагоны для комплектации: ");
+                Console.WriteLine($"{CommandSleppingVagon}-{sleeping.Name}, мест: {sleeping.Places}");
+                Console.WriteLine($"{CommandSittingVagon}-{sitting.Name}, мест:{sitting.Places}");
+                Console.WriteLine($"{CommandReservedVagon}-{reserved.Name} мест:{reserved.Places}");
+
                 string userInput = Console.ReadLine();
+
+                switch (userInput)
+                {
+                    case CommandSleppingVagon:
+                        vans.Add(sleeping);
+                        soldTickets -= sleeping.Places;
+                        break;
+
+                    case CommandSittingVagon:
+                        vans.Add(sitting);
+                        soldTickets -= sitting.Places;
+                        break;
+
+                    case CommandReservedVagon:
+                        vans.Add(reserved);
+                        soldTickets -= reserved.Places;
+                        break;
+                }
             }
 
-
-
-            _trains.Add(train);
+            return vans;
         }
     }
+
     class Train
     {
-        public int Id { get; private set; }
+        private List<Van> _vans = new List<Van>();
+
         public string Direction { get; private set; }
         public int OccupiedPlace { get; private set; }
-        public int FreePlace { get; private set; } = 540;
-        public int Vans { get; private set; }
-        public bool IsSend { get; private set; }
+        public int MaxPlaces { get; private set; } = 540;
+        public int FreePlace { get { return FreePlace = MaxPlaces - OccupiedPlace; } private set { } }
 
-        public Train(int id, string direction, int occupiedPlace, int freePlace, int vans, bool isSend)
+        public Train(string direction, int occupiedPlace, List<Van> vans)
         {
-            Id = id;
             Direction = direction;
             OccupiedPlace = occupiedPlace;
-            FreePlace = freePlace;
-            Vans = vans;
-            IsSend = isSend;
+            _vans = vans;
         }
 
         public Train()
         {
+            Direction = "Владимир-Москва";
+            OccupiedPlace = 0;
+            _vans = new List<Van>();
         }
 
-        public Train SetDirection(out Train? train)
+        public void ShowVans()
         {
-            train = null;
-            Console.WriteLine("Введите желаемое направление: ");
-            string userInput = Console.ReadLine();
-
-            if(userInput != null)
+            foreach (Van van in _vans)
             {
-                Direction = userInput;
+                Console.WriteLine($"{van.Name}, количество мест: {van.Places}");
             }
-
-            return train;
         }
-
-        public Train SellTickets(out Train? train)
-        {
-            train = null;
-            Random random = new();
-            OccupiedPlace = random.Next(1, 540);
-            return train;
-        }
-
     }
 
     class User
     {
         public string? Name { get; private set; }
 
-        public User(string name)
+        public User(string name = "Аноним")
         {
             Name = name;
             SetName();
@@ -151,37 +193,13 @@
 
     class Van
     {
-        public int Places { get; private set; } = 36;
-        public string Name { get; set; }
+        public int Places { get; private set; }
+        public string Name { get; private set; }
 
-        public Van()
+        public Van(string name, int places)
         {
-            Name = "Обычный вагон";
-        }
-
-        public void ShowVan()
-        {
-            Console.WriteLine($"{Name}, количество мест: {Places}");
-        }
-    }
-
-    class SittingVan : Van
-    {
-        public new int Places { get; private set; } = 68;
-
-        public SittingVan()
-        {
-            Name = "Сидячий вагон";
-        }
-    }
-
-    class ReservedVan : Van
-    {
-        public new int Places { get; private set; } = 54;
-
-        public ReservedVan()
-        {
-            Name = "Плацкарт";
+            Name = name;
+            Places = places;
         }
     }
 }
