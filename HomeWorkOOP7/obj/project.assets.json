@@ -8,19 +8,19 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\stargrim33\\.nuget\\packages\\": {}
+    "C:\\Users\\Влад и Аня\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\stargrim33\\Documents\\GitHub\\HomeWorkOOP7\\HomeWorkOOP7\\HomeWorkOOP7.csproj",
+      "projectUniqueName": "C:\\Users\\Влад и Аня\\source\\repos\\HomeWorkOOP7\\HomeWorkOOP7\\HomeWorkOOP7.csproj",
       "projectName": "HomeWorkOOP7",
-      "projectPath": "C:\\Users\\stargrim33\\Documents\\GitHub\\HomeWorkOOP7\\HomeWorkOOP7\\HomeWorkOOP7.csproj",
-      "packagesPath": "C:\\Users\\stargrim33\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\stargrim33\\Documents\\GitHub\\HomeWorkOOP7\\HomeWorkOOP7\\obj\\",
+      "projectPath": "C:\\Users\\Влад и Аня\\source\\repos\\HomeWorkOOP7\\HomeWorkOOP7\\HomeWorkOOP7.csproj",
+      "packagesPath": "C:\\Users\\Влад и Аня\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Влад и Аня\\source\\repos\\HomeWorkOOP7\\HomeWorkOOP7\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\stargrim33\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Влад и Аня\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -61,7 +61,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
       }
     }
   }
