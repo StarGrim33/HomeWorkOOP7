@@ -23,7 +23,7 @@
                 Console.WriteLine($"{CommandFormTrain}-Составить поезд");
                 Console.WriteLine($"{CommandExit}-Выйти из программы");
 
-                string userInput = Console.ReadLine();
+                string? userInput = Console.ReadLine();
 
                 switch (userInput)
                 {
@@ -64,7 +64,7 @@
 
         public void AddTrain()
         {
-            string? direction = SetDirection();
+            string? direction = ReadDirection();
             int soldTickets = SellTickets();
             List<Van> vans = AddVagons(soldTickets);
             Train train = new(direction, soldTickets, vans);
@@ -74,7 +74,7 @@
             train.ShowVans();
         }
 
-        private static string SetDirection()
+        private string ReadDirection()
         {
             Console.WriteLine("Введите город отправления: ");
             string? arrive = Console.ReadLine();
@@ -86,53 +86,55 @@
             return direction;
         }
 
-        private static int SellTickets()
+        private int SellTickets()
         {
             Random random = new();
             int minNumber = 300;
             int maxNumber = 540;
-            int randomNumber = random.Next(minNumber, maxNumber);
-            return randomNumber;
+            return random.Next(minNumber, maxNumber);
         }
 
-        private static List<Van> AddVagons(int soldTickets)
+        private List<Van> AddVagons(int soldTickets)
         {
-            const string CommandSleppingVagon = "1";
-            const string CommandSittingVagon = "2";
-            const string CommandReservedVagon = "3";
-
+            List<Van> availableVans = new() { new Van(1,"Спальный вагон", 18), new Van(2,"Купе", 36), new Van(3,"Плацкарт", 52) };
             List<Van> vans = new();
-            Van sleeping = new("Спальный вагон", 18);
-            Van sitting = new("Купе", 36);
-            Van reserved = new("Плацкарт", 52);
+            Van sleeping = new(1,"Спальный вагон", 18);
+            Van sitting = new(2,"Купе", 36);
+            Van reserved = new(3,"Плацкарт", 52);
 
-            while(soldTickets > 0)
+            while (soldTickets > 0)
             {
                 Console.Clear();
                 Console.WriteLine($"Количество пассажиров: {soldTickets}");
                 Console.WriteLine("Выберите вагоны для комплектации: ");
-                Console.WriteLine($"{CommandSleppingVagon}-{sleeping.Name}, мест: {sleeping.Places}");
-                Console.WriteLine($"{CommandSittingVagon}-{sitting.Name}, мест:{sitting.Places}");
-                Console.WriteLine($"{CommandReservedVagon}-{reserved.Name} мест:{reserved.Places}");
 
-                string? userInput = Console.ReadLine();
-
-                switch (userInput)
+                for(int i = 0; i < availableVans.Count; i++)
                 {
-                    case CommandSleppingVagon:
-                        vans.Add(sleeping);
-                        soldTickets -= sleeping.Places;
-                        break;
+                    Console.Write(i + 1 + " ");
+                    Console.WriteLine($"{availableVans[i].Name}, мест: {availableVans[i].Places}");
+                }
 
-                    case CommandSittingVagon:
-                        vans.Add(sitting);
-                        soldTickets -= sitting.Places;
-                        break;
+                int userInput = Convert.ToInt32(Console.ReadLine());
 
-                    case CommandReservedVagon:
-                        vans.Add(reserved);
-                        soldTickets -= reserved.Places;
-                        break;
+                if(userInput == availableVans[0].Id)
+                {
+                    vans.Add(sleeping);
+                    soldTickets -= sleeping.Places;
+                }
+                else if(userInput == availableVans[1].Id)
+                {
+                    vans.Add(sitting);
+                    soldTickets -= sitting.Places;
+                }
+                else if(userInput == availableVans[2].Id)
+                {
+                    vans.Add(reserved);
+                    soldTickets -= reserved.Places;
+                }
+                else
+                {
+                    Console.WriteLine("Введите цифру нужного вагона от 1 до 3");
+                    Console.ReadKey();
                 }
             }
 
@@ -142,6 +144,8 @@
 
     class Train
     {
+        private List<Van> _vans = new();
+
         public Train(string direction, int occupiedPlace, List<Van> vans)
         {
             Direction = direction;
@@ -150,20 +154,18 @@
             Vans = _vans.Count;
         }
 
-        public string Direction { get; private set; }
-        public int OccupiedPlace { get; private set; }
-        public int MaxPlaces { get; private set; } = 540;
-        public int FreePlace { get { return FreePlace = MaxPlaces - OccupiedPlace; } private set { } }
-        public int Vans { get; private set; }
-
-        private List<Van> _vans = new();
-
         public Train()
         {
             Direction = "Владимир-Москва";
             OccupiedPlace = 0;
             _vans = new List<Van>();
         }
+
+        public string Direction { get; private set; }
+        public int OccupiedPlace { get; private set; }
+        public int MaxPlaces { get; private set; } = 540;
+        public int FreePlace => MaxPlaces - OccupiedPlace;
+        public int Vans { get; private set; }
 
         public void ShowVans()
         {
@@ -179,28 +181,29 @@
         public User(string name = "Аноним")
         {
             Name = name;
-            SetName();
+            ReadName();
         }
 
         public string? Name { get; private set; }
 
-        public void SetName()
+        private void ReadName()
         {
             Console.WriteLine("Здравствуйте, как я могу к Вам обращаться?: ");
             Name = Console.ReadLine();
-
             Name ??= "Аноним";
         }
     }
 
     class Van
     {
-        public Van(string name, int places)
+        public Van(int id, string name, int places)
         {
+            Id = id;
             Name = name;
             Places = places;
         }
 
+        public int Id { get; private set; }
         public int Places { get; private set; }
         public string Name { get; private set; }
     }
