@@ -96,11 +96,8 @@
 
         private List<Van> AddVagons(int soldTickets)
         {
-            List<Van> availableVans = new() { new Van(1,"Спальный вагон", 18), new Van(2,"Купе", 36), new Van(3,"Плацкарт", 52) };
+            List<Van> availableVans = new() { new Van(1, "Спальный вагон", 18), new Van(2, "Купе", 36), new Van(3, "Плацкарт", 52) };
             List<Van> vans = new();
-            Van sleeping = new(1,"Спальный вагон", 18);
-            Van sitting = new(2,"Купе", 36);
-            Van reserved = new(3,"Плацкарт", 52);
 
             while (soldTickets > 0)
             {
@@ -108,33 +105,21 @@
                 Console.WriteLine($"Количество пассажиров: {soldTickets}");
                 Console.WriteLine("Выберите вагоны для комплектации: ");
 
-                for(int i = 0; i < availableVans.Count; i++)
+                for (int i = 0; i < availableVans.Count; i++)
                 {
                     Console.Write(i + 1 + " ");
                     Console.WriteLine($"{availableVans[i].Name}, мест: {availableVans[i].Places}");
                 }
 
-                int userInput = Convert.ToInt32(Console.ReadLine());
+                bool isNumber = int.TryParse(Console.ReadLine(), out int userInput);
 
-                if(userInput == availableVans[0].Id)
+                foreach (Van аvailableVans in availableVans)
                 {
-                    vans.Add(sleeping);
-                    soldTickets -= sleeping.Places;
-                }
-                else if(userInput == availableVans[1].Id)
-                {
-                    vans.Add(sitting);
-                    soldTickets -= sitting.Places;
-                }
-                else if(userInput == availableVans[2].Id)
-                {
-                    vans.Add(reserved);
-                    soldTickets -= reserved.Places;
-                }
-                else
-                {
-                    Console.WriteLine("Введите цифру нужного вагона от 1 до 3");
-                    Console.ReadKey();
+                    if (isNumber && аvailableVans.Id == userInput)
+                    {
+                        vans.Add(аvailableVans);
+                        soldTickets -= аvailableVans.Places;
+                    }
                 }
             }
 
